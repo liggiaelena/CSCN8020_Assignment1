@@ -12,18 +12,40 @@ class Policy:
 
     A deterministic policy stores action[s] for each state.
     A stochastic policy stores a probability distribution over actions for each state.
+
+    Supports array-style indexing (policy[s]) so it integrates transparently
+    with numpy operations and the existing visualisation utilities.
     """
 
     def __init__(self, n_states: int, n_actions: int, stochastic: bool = False):
-        self.n_states  = n_states
-        self.n_actions = n_actions
+        self.n_states   = n_states
+        self.n_actions  = n_actions
         self.stochastic = stochastic
 
         if stochastic:
-            # Uniform random policy by default
-            self.probs = np.ones((n_states, n_actions)) / n_actions
+            self.probs   = np.ones((n_states, n_actions)) / n_actions
         else:
             self.actions = np.zeros(n_states, dtype=int)
+
+    # ── Array-style access ────────────────────────────────────────────────────
+
+    def __getitem__(self, key):
+        return self.actions[key]
+
+    def __setitem__(self, key, value):
+        self.actions[key] = value
+
+    def __array__(self, dtype=None):
+        """Let numpy treat a Policy as its underlying actions array."""
+        return self.actions if dtype is None else self.actions.astype(dtype)
+
+    def __len__(self):
+        return self.n_states
+
+    def tolist(self):
+        return self.actions.tolist()
+
+    # ── Policy methods ────────────────────────────────────────────────────────
 
     def select_action(self, state: int) -> int:
         """Sample an action for the given state."""

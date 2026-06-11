@@ -48,7 +48,7 @@ CSCN8020_Assignment1/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/<USRID>/CSCN8020_Assignment1.git
+git clone git@github.com:liggiaelena/CSCN8020_Assignment1.git
 cd CSCN8020_Assignment1
 
 # 2. Create and activate a virtual environment
@@ -64,8 +64,6 @@ jupyter notebook CSCN8020_Assignment1.ipynb
 ```
 
 **Run all cells from top to bottom.** The setup cell must be executed first — it configures the logger and creates the `logs/` directory automatically.
-
-> **Note:** Log files are excluded from the repository via `.gitignore`. Running the notebook regenerates them inside `logs/`.
 
 ---
 
@@ -86,7 +84,7 @@ jupyter notebook CSCN8020_Assignment1.ipynb
 ## Known Limitations
 
 - **MC approximation error**: Off-policy MC with a uniform behavior policy converges slowly for states far from the goal. Increasing `n_episodes` beyond 50,000 reduces the MAE vs Value Iteration.
-- **Log files excluded**: The `.gitignore` excludes `*.log`. Run the notebook to regenerate execution logs in `logs/`.
+- **Log files**: One example log (`logs/execution_20260611_165137.log`) is committed for grading. All other runtime logs are excluded via `.gitignore`. Re-running the notebook generates a new timestamped log in `logs/`.
 - **Python 3.11+**: The notebook uses f-strings and `match`-free syntax compatible with Python 3.8+, but was developed and tested on Python 3.14.
 
 ---

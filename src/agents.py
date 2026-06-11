@@ -7,6 +7,8 @@ import numpy as np
 import time
 import logging
 
+from .policies import Policy
+
 logger = logging.getLogger("RL_Assignment1")
 
 
@@ -22,7 +24,7 @@ class ValueIterationAgent:
         self.env    = env
         self.theta  = theta
         self.V      = np.zeros(env.n_states)
-        self.policy = np.zeros(env.n_states, dtype=int)
+        self.policy = Policy(env.n_states, env.n_actions)
 
     def run(self):
         n_iter = 0
@@ -43,8 +45,7 @@ class ValueIterationAgent:
             self.V  = V_new
             n_iter += 1
 
-            if n_iter % 50 == 0:
-                logger.info("[VI]    iter=%4d  delta=%.8f", n_iter, delta)
+            logger.info("[VI]    iter=%4d  delta=%.8f", n_iter, delta)
             if delta < self.theta:
                 break
 
@@ -55,13 +56,7 @@ class ValueIterationAgent:
         return n_iter, elapsed
 
     def _extract_policy(self):
-        for s in range(self.env.n_states):
-            if self.env.is_goal(s):
-                self.policy[s] = 0
-                continue
-            Q = (self.env.reward_matrix[s]
-                 + self.env.gamma * self.V[self.env.transitions[s]])
-            self.policy[s] = int(np.argmax(Q))
+        self.policy.make_greedy_from_V(self.env, self.V)
 
 
 class InPlaceValueIterationAgent:
@@ -77,7 +72,7 @@ class InPlaceValueIterationAgent:
         self.env    = env
         self.theta  = theta
         self.V      = np.zeros(env.n_states)
-        self.policy = np.zeros(env.n_states, dtype=int)
+        self.policy = Policy(env.n_states, env.n_actions)
 
     def run(self):
         n_iter = 0
@@ -96,8 +91,7 @@ class InPlaceValueIterationAgent:
                 delta     = max(delta, abs(v_old - self.V[s]))
             n_iter += 1
 
-            if n_iter % 50 == 0:
-                logger.info("[IP-VI] iter=%4d  delta=%.8f", n_iter, delta)
+            logger.info("[IP-VI] iter=%4d  delta=%.8f", n_iter, delta)
             if delta < self.theta:
                 break
 
@@ -108,13 +102,7 @@ class InPlaceValueIterationAgent:
         return n_iter, elapsed
 
     def _extract_policy(self):
-        for s in range(self.env.n_states):
-            if self.env.is_goal(s):
-                self.policy[s] = 0
-                continue
-            Q = (self.env.reward_matrix[s]
-                 + self.env.gamma * self.V[self.env.transitions[s]])
-            self.policy[s] = int(np.argmax(Q))
+        self.policy.make_greedy_from_V(self.env, self.V)
 
 
 class MonteCarloOffPolicyAgent:
@@ -146,7 +134,7 @@ class MonteCarloOffPolicyAgent:
         self.C = np.zeros((env.n_states, env.n_actions))
 
         # Target policy: greedy w.r.t. Q (initially all action-0)
-        self.policy = np.zeros(env.n_states, dtype=int)
+        self.policy = Policy(env.n_states, env.n_actions)
 
         # Behavior policy probability per action (uniform)
         self.b_prob = 1.0 / env.n_actions   # = 0.25
@@ -212,7 +200,7 @@ class MonteCarloOffPolicyAgent:
 
         # Extract V from Q
         self.V = np.max(self.Q, axis=1).copy()
-        self.V[self.env.goal_idx]      = 0.0
+        self.V[self.env.goal_idx] = 0.0
         self.policy[self.env.goal_idx] = 0
 
         logger.info("[P4-MC] Done: %d episodes  %.3fs", self.n_episodes, elapsed)

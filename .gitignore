@@ -11,8 +11,9 @@ __pycache__/
 # Jupyter checkpoints
 .ipynb_checkpoints/
 
-# Logs (generated at runtime — see notebook to regenerate)
-*.log
+# Runtime logs (regenerated each run) — one example kept for grading
+logs/execution_*.log
+!logs/execution_20260611_165137.log
 
 # OS files
 .DS_Store
@@ -27,3 +28,5 @@ Thumbs.db
 # IDE settings
 .vscode/
 .idea/
+
+.claude
