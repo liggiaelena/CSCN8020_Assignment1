@@ -1,0 +1,29 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Logs (generated at runtime — see notebook to regenerate)
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Large runtime files
+*.h5
+*.pkl
+*.npy
+*.npz
+
+# IDE settings
+.vscode/
+.idea/
